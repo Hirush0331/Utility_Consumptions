@@ -6,9 +6,9 @@ import pickle
 from datetime import datetime
 
 # Load the trained models
-electricity_model = pickle.load(open('Consumptions/electricity_pkl.sav', 'rb'))
-steam_model = pickle.load(open('Consumptions/steam_pkl.sav', 'rb'))
-water_model = pickle.load(open('Consumptions/water_pkl.sav', 'rb'))
+electricity_model = pickle.load(open('electricity_pkl.sav', 'rb'))
+steam_model = pickle.load(open('steam_pkl.sav', 'rb'))
+water_model = pickle.load(open('water_pkl.sav', 'rb'))
 
 # Google Sheets setup
 def save_to_google_sheet(data):
@@ -27,9 +27,12 @@ def save_to_google_sheet(data):
     # Append the data with the timestamp
     sheet.append_row([current_time] + data)
 
-# Streamlit UI
+# Streamlit UI - Adjusting Container Width
+st.set_page_config(page_title="Utility Prediction Model", layout="wide")
+
+
 st.markdown(
-    "<div style='text-align: center; font-size: 46px; font-weight: bold;'>Utility Prediction Model</div>",
+    "<div style='text-align: center; font-size: 46px; font-weight: bold; color: #FF4B4B;'>Utility Prediction Model</div>",
     unsafe_allow_html=True
 )
 st.markdown(
@@ -58,7 +61,7 @@ def side_by_side_input(label, key_day, key_night):
     return day_value, night_value
 
 # Input fields for machines
-col1, spacer, col2 = st.columns([2, 0.5, 2])  # Add spacing between the two columns
+col1, spacer, col2, spacer, col3, spacer, col4 = st.columns([2, 0.5, 2, 0.5, 0.1, 0.5, 2.5])  # Add spacing between the two columns
 with col1:
     knitting_day, knitting_night = side_by_side_input("Knitting Machines", 'knit_day', 'knit_night')
     st.write("")
@@ -85,69 +88,83 @@ with col2:
     st.write("")
     luwa_day, luwa_night = side_by_side_input("Luwa", 'luwa_day', 'luwa_night')
 
+# Add vertical line by using the following HTML + CSS (between col2 and col3)
+# Add vertical line between col2 and col3
+with col3:
+    st.markdown("<div style='border-left: 2px solid #2f3336; height: 770px;'></div>", unsafe_allow_html=True)
+
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
 st.write("---")
+with col4:
 
-# Prediction Button
-if st.button("Predict Consumption"):
-    # Replace None values with 0 for missing inputs
-    inputs = [
-        knitting_day if knitting_day is not None else 0,
-        knitting_night if knitting_night is not None else 0,
-        bulk_dye_day if bulk_dye_day is not None else 0,
-        bulk_dye_night if bulk_dye_night is not None else 0,
-        sample_dye_day if sample_dye_day is not None else 0,
-        sample_dye_night if sample_dye_night is not None else 0,
-        dryers_day if dryers_day is not None else 0,
-        dryers_night if dryers_night is not None else 0,
-        presetting_day if presetting_day is not None else 0,
-        presetting_night if presetting_night is not None else 0,
-        chillers_day if chillers_day is not None else 0,
-        chillers_night if chillers_night is not None else 0,
-        ahu_day if ahu_day is not None else 0,
-        ahu_night if ahu_night is not None else 0,
-        compressor_day if compressor_day is not None else 0,
-        compressor_night if compressor_night is not None else 0,
-        luwa_day if luwa_day is not None else 0,
-        luwa_night if luwa_night is not None else 0
-    ]
+    #st.write("---")
 
-    # Check if all inputs are 0
-    if all(value == 0 for value in inputs):
-        st.error("Please provide at least one non-zero input to make a prediction.")
-    else:
-        # Create DataFrame for input
-        input_data = {
-            'Knitting - D': [inputs[0]], 
-            'Knitting - N': [inputs[1]], 
-            'Bulk Dye - D': [inputs[2]], 
-            'Bulk Dye - N': [inputs[3]], 
-            'Sample Dye - D': [inputs[4]], 
-            'Sample Dye - N': [inputs[5]], 
-            'Dryers - D': [inputs[6]], 
-            'Dryers - N': [inputs[7]], 
-            'Presetting - D': [inputs[8]], 
-            'Presetting - N': [inputs[9]], 
-            'Chillers - D': [inputs[10]], 
-            'Chillers - N': [inputs[11]], 
-            'AHU - D': [inputs[12]], 
-            'AHU - N': [inputs[13]], 
-            'Compressor - D': [inputs[14]], 
-            'Compressor - N': [inputs[15]], 
-            'Luwa - D': [inputs[16]], 
-            'Luwa - N': [inputs[17]]
-        }
-        input_df = pd.DataFrame(input_data)
+    # Prediction Button
+    if st.button("Predict Consumptions"):
+        # Replace None values with 0 for missing inputs
+        inputs = [
+            knitting_day if knitting_day is not None else 0,
+            knitting_night if knitting_night is not None else 0,
+            bulk_dye_day if bulk_dye_day is not None else 0,
+            bulk_dye_night if bulk_dye_night is not None else 0,
+            sample_dye_day if sample_dye_day is not None else 0,
+            sample_dye_night if sample_dye_night is not None else 0,
+            dryers_day if dryers_day is not None else 0,
+            dryers_night if dryers_night is not None else 0,
+            presetting_day if presetting_day is not None else 0,
+            presetting_night if presetting_night is not None else 0,
+            chillers_day if chillers_day is not None else 0,
+            chillers_night if chillers_night is not None else 0,
+            ahu_day if ahu_day is not None else 0,
+            ahu_night if ahu_night is not None else 0,
+            compressor_day if compressor_day is not None else 0,
+            compressor_night if compressor_night is not None else 0,
+            luwa_day if luwa_day is not None else 0,
+            luwa_night if luwa_night is not None else 0
+        ]
 
-        # Predict using the models
-        electricity_pred = electricity_model.predict(input_df)
-        steam_pred = steam_model.predict(input_df)
-        water_pred = water_model.predict(input_df)
+        # Check if all inputs are 0
+        if all(value == 0 for value in inputs):
+            st.error("Please provide at least one non-zero input to make a prediction.")
+        else:
+            # Create DataFrame for input
+            input_data = {
+                'Knitting - D': [inputs[0]], 
+                'Knitting - N': [inputs[1]], 
+                'Bulk Dye - D': [inputs[2]], 
+                'Bulk Dye - N': [inputs[3]], 
+                'Sample Dye - D': [inputs[4]], 
+                'Sample Dye - N': [inputs[5]], 
+                'Dryers - D': [inputs[6]], 
+                'Dryers - N': [inputs[7]], 
+                'Presetting - D': [inputs[8]], 
+                'Presetting - N': [inputs[9]], 
+                'Chillers - D': [inputs[10]], 
+                'Chillers - N': [inputs[11]], 
+                'AHU - D': [inputs[12]], 
+                'AHU - N': [inputs[13]], 
+                'Compressor - D': [inputs[14]], 
+                'Compressor - N': [inputs[15]], 
+                'Luwa - D': [inputs[16]], 
+                'Luwa - N': [inputs[17]]
+            }
+            input_df = pd.DataFrame(input_data)
 
-        # Save to Google Sheets
-        #save_to_google_sheet(inputs + [electricity_pred[0], steam_pred[0], water_pred[0]])
+            # Predict using the models
+            electricity_pred = electricity_model.predict(input_df)
+            steam_pred = steam_model.predict(input_df)
+            water_pred = water_model.predict(input_df)
 
-        # Display Predictions
-        st.subheader("Predicted Consumption Results")
-        st.write(f"**Electricity Consumption (kWh):** {electricity_pred[0]:.2f}")
-        st.write(f"**Steam Consumption (kg):** {steam_pred[0]:.2f}")
-        st.write(f"**Water Consumption (Cu.m.):** {water_pred[0]:.2f}")
+            # Save to Google Sheets
+            #save_to_google_sheet(inputs + [electricity_pred[0], steam_pred[0], water_pred[0]])
+
+            # Display Predictions
+            st.subheader("Predicted Consumption Results")
+            st.write(f"**Electricity Consumption (kWh):** {electricity_pred[0]:.2f}")
+            st.write(f"**Steam Consumption (kg):** {steam_pred[0]:.2f}")
+            st.write(f"**Water Consumption (Cu.m.):** {water_pred[0]:.2f}")
