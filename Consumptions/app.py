@@ -105,7 +105,7 @@ with col4:
     #st.write("---")
 
     # Prediction Button
-    if st.button("Predict Consumptions"):
+    if st.button("Predict Consumption"):
         # Replace None values with 0 for missing inputs
         inputs = [
             knitting_day if knitting_day is not None else 0,
