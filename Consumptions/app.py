@@ -50,14 +50,12 @@ st.write("")
 
 # Function for side-by-side input with labels above the fields
 def side_by_side_input(label, key_day, key_night):
-    st.write(f"**{label} -**")
-    col_day, col_night = st.columns([1, 1])
+    st.markdown(f"**{label} -**")
+    col_day, col_night = st.columns(2)
     with col_day:
-        st.markdown("<div style='margin-bottom: -10px;'>Day</div>", unsafe_allow_html=True)
-        day_value = st.number_input("", min_value=0, step=1, key=key_day, label_visibility='collapsed', value=None)
+        day_value = st.number_input("Day", min_value=0, step=1, key=key_day, value=None)
     with col_night:
-        st.markdown("<div style='margin-bottom: -10px;'>Night</div>", unsafe_allow_html=True)
-        night_value = st.number_input("", min_value=0, step=1, key=key_night, label_visibility='collapsed', value=None)
+        night_value = st.number_input("Night", min_value=0, step=1, key=key_night, value=None)
     return day_value, night_value
 
 # Input fields for machines
@@ -91,18 +89,16 @@ with col2:
 # Add vertical line by using the following HTML + CSS (between col2 and col3)
 # Add vertical line between col2 and col3
 with col3:
-    st.markdown("<div style='border-left: 2px solid #2f3336; height: 770px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='border-left: 2px solid #2f3336; height: 900px;'></div>", unsafe_allow_html=True)
 
-st.write("")
-st.write("")
-st.write("")
-st.write("")
-st.write("")
 st.write("")
 st.write("---")
 with col4:
-
-    #st.write("---")
+    # Push the button down so it lines up with the input form instead of
+    # sitting isolated near the top of the column
+    st.write("")
+    st.write("")
+    st.write("")
 
     # Prediction Button
     if st.button("Predict Consumptions"):
