@@ -59,7 +59,7 @@ def side_by_side_input(label, key_day, key_night):
     return day_value, night_value
 
 # Input fields for machines
-col1, spacer, col2, spacer, col3, spacer, col4 = st.columns([2, 0.5, 2, 0.5, 0.1, 0.5, 2.5])  # Add spacing between the two columns
+col1, spacer, col2, spacer, col3, spacer, col4 = st.columns([3, 0.3, 3, 0.3, 0.1, 0.3, 2]) # Add spacing between the two columns
 with col1:
     knitting_day, knitting_night = side_by_side_input("Knitting Machines", 'knit_day', 'knit_night')
     st.write("")
