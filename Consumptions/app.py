@@ -31,24 +31,37 @@ def save_to_google_sheet(data):
 st.set_page_config(page_title="Utility Prediction Model", layout="wide")
 
 
-st.title("🏭 Utility Consumption Prediction")
-st.caption("Predict electricity, steam and water consumption based on machine day and night operating counts.")
-st.divider()
-st.subheader("Machine Operating Details")
+st.markdown(
+    "<div style='text-align: center; font-size: 46px; font-weight: bold; color: #FF4B4B;'>Utility Prediction Model</div>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    "<div style='margin-top: 40px; font-size: 18px;'>"
+    "</div>",
+    unsafe_allow_html=True,
+)
+
+st.write("")
+
+# Layout for Day and Night Input Counts
+st.subheader("Enter Machine Day and Night Counts")
+st.write("")
+st.write("")
 
 # Function for side-by-side input with labels above the fields
 def side_by_side_input(label, key_day, key_night):
-    st.markdown(f"**{label}**")
-    c1,c2=st.columns(2)
-    with c1:
-        day_value=st.number_input("Day",min_value=0,step=1,key=key_day,value=0)
-    with c2:
-        night_value=st.number_input("Night",min_value=0,step=1,key=key_night,value=0)
-    st.markdown("<br>",unsafe_allow_html=True)
-    return day_value,night_value
+    st.write(f"**{label} -**")
+    col_day, col_night = st.columns([1, 1])
+    with col_day:
+        st.markdown("<div style='margin-bottom: -10px;'>Day</div>", unsafe_allow_html=True)
+        day_value = st.number_input("", min_value=0, step=1, key=key_day, label_visibility='collapsed', value=None)
+    with col_night:
+        st.markdown("<div style='margin-bottom: -10px;'>Night</div>", unsafe_allow_html=True)
+        night_value = st.number_input("", min_value=0, step=1, key=key_night, label_visibility='collapsed', value=None)
+    return day_value, night_value
 
 # Input fields for machines
-col1, col2 = st.columns(2, gap='large')  # Add spacing between the two columns
+col1, spacer, col2, spacer, col3, spacer, col4 = st.columns([2, 0.5, 2, 0.5, 0.1, 0.5, 2.5])  # Add spacing between the two columns
 with col1:
     knitting_day, knitting_night = side_by_side_input("Knitting Machines", 'knit_day', 'knit_night')
     st.write("")
@@ -75,16 +88,24 @@ with col2:
     st.write("")
     luwa_day, luwa_night = side_by_side_input("Luwa", 'luwa_day', 'luwa_night')
 
+# Add vertical line by using the following HTML + CSS (between col2 and col3)
+# Add vertical line between col2 and col3
+with col3:
+    st.markdown("<div style='border-left: 2px solid #2f3336; height: 770px;'></div>", unsafe_allow_html=True)
 
-st.divider()
-
-predict_col=st.container()
-with predict_col:
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("---")
+with col4:
 
     #st.write("---")
 
     # Prediction Button
-    if st.button("🔮 Predict Consumption", use_container_width=True):
+    if st.button("Predict Consumptions"):
         # Replace None values with 0 for missing inputs
         inputs = [
             knitting_day if knitting_day is not None else 0,
@@ -143,9 +164,7 @@ with predict_col:
             #save_to_google_sheet(inputs + [electricity_pred[0], steam_pred[0], water_pred[0]])
 
             # Display Predictions
-            st.divider()
-            st.subheader("Prediction Results")
-            c1,c2,c3=st.columns(3)
-            c1.metric("⚡ Electricity",f"{electricity_pred[0]:,.2f} kWh")
-            c2.metric("♨️ Steam",f"{steam_pred[0]:,.2f} kg")
-            c3.metric("💧 Water",f"{water_pred[0]:,.2f} Cu.m.")
+            st.subheader("Predicted Consumption Results")
+            st.write(f"**Electricity Consumption (kWh):** {electricity_pred[0]:.2f}")
+            st.write(f"**Steam Consumption (kg):** {steam_pred[0]:.2f}")
+            st.write(f"**Water Consumption (Cu.m.):** {water_pred[0]:.2f}")
