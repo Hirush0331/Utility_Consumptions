@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import pickle
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 #import gspread
 #from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
